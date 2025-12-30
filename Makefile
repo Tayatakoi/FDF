@@ -1,28 +1,38 @@
+NAME = fdf
 
+CC = gcc
+CFLAGS = -Wall -Wextra -Werror
 
-FRAEMWORKS=-framework OpenGL -framework AppKit
-FLAGS=-Werror -Wextra -Wall
-NAME=fdf
-SRC=src/*.c
-INCLUDES=libft/libft.a minilibx_macos/libmlx.a
+SRC = src/*.c \
+      get-next-line/*.c
 
-all:
-	@make -C libft/ all
-	@make -C minilibx_macos/ all
-	gcc $(SRC) -o $(NAME) $(FLAGS) $(INCLUDES) $(FRAEMWORKS)
+LIBFT = libft/libft.a
+PRINTF = printf/libftprintf.a
+MLX = minilibx-linux/libmlx.a
+
+MLX_FLAGS = -lXext -lX11
+MATH = -lm
+
+all: $(NAME)
+
+$(NAME):
+	make -C libft
+	make -C printf
+	make -C minilibx-linux
+	$(CC) $(SRC) -o $(NAME) $(CFLAGS) \
+	$(LIBFT) $(PRINTF) $(MLX) $(MLX_FLAGS) $(MATH)
 
 clean:
-	@make -C libft/ clean
-	@make -C minilibx_macos/ clean
+	make -C libft clean
+	make -C printf clean
+	make -C minilibx-linux clean
 
 fclean: clean
-	/bin/rm -f $(NAME)
-	@make -C libft/ fclean
+	rm -f $(NAME)
+	make -C libft fclean
+	make -C printf fclean
 
 re: fclean all
 
-push:
-	git add .
-	git status
-	git commit -m fdf
-	git push
+.PHONY: all clean fclean re
+
